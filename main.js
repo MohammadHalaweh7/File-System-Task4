@@ -11,30 +11,28 @@ let readCSV = (csvFile) => {
   let jsArray = users.map((ele) => {
     return ele.split(", ");
   });
+  // console.log(jsArray);
   return jsArray;
 };
 
 let convertToJson = (jsArray) => {
   let metaData = ["userName", "birthDate", "address", "mobileNumber", "gender"];
-  let userData = {
-    userName: "",
-    birthDate: "",
-    address: "",
-    mobileNumber: "",
-    gender: "",
-  };
 
   jsArray.map((element, key) => {
+    let userData = {};
     if (key > 0) {
-      let personData = element.map((data, key) => {
-        return data;
-      });
-      personData.map((element, key) => {
+      // let personData = element.map((data, key) => {
+      //   // console.log(data);
+      //   return data;
+      // });
+      // console.log(personData);
+      element.map((element, key) => {
         userData[metaData[key]] = element;
       });
       JSONArray.push(userData);
     }
   });
+  // console.log(JSONArray);
   return JSONArray;
 };
 
@@ -45,6 +43,7 @@ let saveToFile = (arr, jsonFile) => {
 
 let readJSONFile = (jsonFile) => {
   const data = fs.readFileSync(jsonFile, "utf8");
+  console.log(data);
 };
 
 let data = readCSV(csvFile);
