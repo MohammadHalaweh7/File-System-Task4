@@ -19,7 +19,13 @@ let convertToJson = (jsArray) => {
   let metaData = ["userName", "birthDate", "address", "mobileNumber", "gender"];
 
   jsArray.map((element, key) => {
-    let userData = {};
+    let userData = {
+      userName: "",
+      birthDate: "",
+      address: "",
+      mobileNumber: "",
+      gender: "",
+    };
     if (key > 0) {
       // let personData = element.map((data, key) => {
       //   // console.log(data);
