@@ -1,58 +1,44 @@
-const fs = require("fs");
+const fs = require("fs/promises");
 
 const csvFile = "./users.csv";
 const jsonFile = "./users.json";
-const JSONArray = [];
+const userData = {
+  userName: "",
+  birthDate: "",
+  address: "",
+  mobileNumber: "",
+  gender: "",
+};
+let readCSV = async (csvFile) => {
+  const myData = await fs.readFile(csvFile, "utf8");
+  return myData.split("\n").map((user) => user.split(",").map((d) => d.trim()));
+};
 
-let readCSV = (csvFile) => {
-  let myData = fs.readFileSync(csvFile, "utf8");
-  let users = myData.split("\n");
-
-  let jsArray = users.map((ele) => {
-    return ele.split(", ");
+const convertToJson = (csvData) => {
+  const metaData = Object.keys(userData);
+  return csvData.slice(1).map((user) => {
+    let userData = {};
+    user.forEach((value, index) => {
+      userData[metaData[index]] = value;
+    });
+    return userData;
   });
-  // console.log(jsArray);
-  return jsArray;
 };
 
-let convertToJson = (jsArray) => {
-  let metaData = ["userName", "birthDate", "address", "mobileNumber", "gender"];
-
-  jsArray.map((element, key) => {
-    let userData = {
-      userName: "",
-      birthDate: "",
-      address: "",
-      mobileNumber: "",
-      gender: "",
-    };
-    if (key > 0) {
-      // let personData = element.map((data, key) => {
-      //   // console.log(data);
-      //   return data;
-      // });
-      // console.log(personData);
-      element.map((element, key) => {
-        userData[metaData[key]] = element;
-      });
-      JSONArray.push(userData);
-    }
-  });
-  // console.log(JSONArray);
-  return JSONArray;
+const saveToFile = async (data, filePath) => {
+  let dataStr = JSON.stringify(data);
+  await fs.writeFile(filePath, dataStr);
 };
 
-let saveToFile = (arr, jsonFile) => {
-  let jsonFileData = JSON.stringify(arr);
-  fs.writeFileSync(jsonFile, jsonFileData);
-};
-
-let readJSONFile = (jsonFile) => {
-  const data = fs.readFileSync(jsonFile, "utf8");
+const readJSONFile = async (jsonFile) => {
+  const data = await fs.readFile(jsonFile, "utf8");
   console.log(data);
 };
 
-let data = readCSV(csvFile);
-let dataArray = convertToJson(data);
-saveToFile(dataArray, jsonFile);
-readJSONFile(jsonFile);
+async function display() {
+  const data = await readCSV(csvFile);
+  const dataArray = await convertToJson(data);
+  await saveToFile(dataArray, jsonFile);
+  await readJSONFile(jsonFile);
+}
+display();
